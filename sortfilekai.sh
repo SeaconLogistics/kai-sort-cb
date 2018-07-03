@@ -3,6 +3,22 @@
 #find me in /mnt/appdata/System/cargobase
 #use with: rsync -i --ignore-existing root@172.16.0.182:/users/dat/mdt_10/dfue_in/telebox/iftmin_save/*.gz ./sync/ |sed 's/............//' | xargs -I+ ./sortfilekai.sh "+"
 
+
+# set the base path for the destination
+basepath="/mnt/appdata/System/ict/in"
+#basepath="/Users/kre/Desktop/sync/sortfolder"
+if [ $HOSTNAME = "Kai-Arnes-MacBook-Pro.local" ]; then
+  echo "hi Kai on $HOSTNAME"
+  basepath="/Users/kre/Desktop/sync/sortfolder"
+fi
+
+esburl="http://kai.requestcatcher.com/bla"
+
+save_and_post(){
+  echo $1 > "$basepath/$folder/$file" 
+  curl --silent -d "$1" -H "Content-Type: text/plain" $esburl --output /dev/null
+}
+
 # store the filename
 file="$1"
 
@@ -24,9 +40,6 @@ filetype=`file --mime-type -b ./sync/"$file"`
 cust=`echo "$file" | awk -F'_' '{print $2}'`
 
 
-# set the base path for the destination
-basepath="/mnt/appdata/System/ict/in"
-#basepath="/Users/kre/Desktop/sync/sortfolder"
 
 
 # since some of the numbers need to go into specific folder, set a variable with the foldername
@@ -57,15 +70,18 @@ mkdir -p "$basepath/$folder"
 case "$filetype" in 
 "text/plain")
   echo "iconv-ing text file $file"
-  iconv --from-code=ISO-8859-1 --to-code=UTF-8 "./sync/$file" > "$basepath/$folder/$file"
+  content=` iconv --from-code=ISO-8859-1 --to-code=UTF-8 "./sync/$file" `
+  save_and_post "$content"
   ;;
 "application/x-gzip")
   echo "unzipping and iconv-ing file $file"
-  gunzip -c "./sync/$file" | iconv --from-code=ISO-8859-1 --to-code=UTF-8 > "$basepath/$folder/$originalfilename"
+  content=`gunzip -c "./sync/$file" | iconv --from-code=ISO-8859-1 --to-code=UTF-8` 
+  save_and_post "$content"
   ;;
 *)
   echo "iconv-ing unidentified file $file"
-  iconv --from-code=ISO-8859-1 --to-code=UTF-8 "./sync/$file" > "$basepath/$folder/$file"
+  content=` iconv --from-code=ISO-8859-1 --to-code=UTF-8 "./sync/$file" `
+  save_and_post "$content"
   ;;
 
 esac
