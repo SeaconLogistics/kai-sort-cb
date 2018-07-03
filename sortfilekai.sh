@@ -56,16 +56,16 @@ mkdir -p "$basepath/$folder"
 # now, based on the filetype we either unzip it, or just move it into the folder.
 case "$filetype" in 
 "text/plain")
-  echo "copying text file $file"
-  cp "./sync/$file" "$basepath/$folder/$file"
+  echo "iconv-ing text file $file"
+  iconv --from-code=ISO-8859-1 --to-code=UTF-8 "./sync/$file" > "$basepath/$folder/$file"
   ;;
 "application/x-gzip")
-  echo "unzipping file $file"
-  gunzip -c "./sync/$file" > "$basepath/$folder/$originalfilename"
+  echo "unzipping and iconv-ing file $file"
+  gunzip -c "./sync/$file" | iconv --from-code=ISO-8859-1 --to-code=UTF-8 > "$basepath/$folder/$originalfilename"
   ;;
 *)
-  echo "copying unidentified file $file"
-  cp "./sync/$file" "$basepath/$folder/$file"
+  echo "iconv-ing unidentified file $file"
+  iconv --from-code=ISO-8859-1 --to-code=UTF-8 "./sync/$file" > "$basepath/$folder/$file"
   ;;
 
 esac
