@@ -9,6 +9,13 @@ file="$1"
 # get the name of the file without extension, to use for unzipping only
 originalfilename=${file%.*}
 
+# exit out of the script if the filename contains either D99A_M.edi or EDI_08A_M.edi 
+case "$file" in
+    *"D99A_M.edi"*) exit 1  ;;
+    *"EDI_08A_M.edi"*) exit 1  ;;
+esac
+
+
 # identify what type of file it is, since we need to unzip the .gz, and just copy the rest.
 filetype=`file --mime-type -b ./sync/"$file"`
 # echo $filetype
@@ -18,8 +25,8 @@ cust=`echo "$file" | awk -F'_' '{print $2}'`
 
 
 # set the base path for the destination
-#basepath="/mnt/appdata/System/ict/in"
-basepath="/Users/kre/Desktop/sync/sortfolder"
+basepath="/mnt/appdata/System/ict/in"
+#basepath="/Users/kre/Desktop/sync/sortfolder"
 
 
 # since some of the numbers need to go into specific folder, set a variable with the foldername
@@ -54,7 +61,7 @@ case "$filetype" in
   ;;
 "application/x-gzip")
   echo "unzipping file $file"
-  gunzip -ck "./sync/$file" > "$basepath/$folder/$originalfilename"
+  gunzip -c "./sync/$file" > "$basepath/$folder/$originalfilename"
   ;;
 *)
   echo "copying unidentified file $file"
