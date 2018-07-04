@@ -76,6 +76,7 @@ case "$filetype" in
 "application/x-gzip")
   echo "unzipping and iconv-ing file $file"
   content=`gunzip -c "./sync/$file" | iconv --from-code=ISO-8859-1 --to-code=UTF-8` 
+  file=$originalfilename
   save_and_post "$content"
   ;;
 *)
