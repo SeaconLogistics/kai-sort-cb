@@ -34,7 +34,7 @@ esac
 
 # identify what type of file it is, since we need to unzip the .gz, and just copy the rest.
 filetype=`file --mime-type -b ./sync/"$file"`
-# echo $filetype
+echo $filetype
 
 # get the second part of the filename, seperated by underscore to get the folder into which the file needs to go.
 cust=`echo "$file" | awk -F'_' '{print $2}'`
