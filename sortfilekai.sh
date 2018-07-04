@@ -3,12 +3,13 @@
 #find me in /mnt/appdata/System/cargobase
 #use with: rsync -i --ignore-existing root@172.16.0.182:/users/dat/mdt_10/dfue_in/telebox/iftmin_save/*.gz ./sync/ |sed 's/............//' | xargs -I+ ./sortfilekai.sh "+"
 
-
+filepath="/mnt/appdata/System/cargobase"
 # set the base path for the destination
 basepath="/mnt/appdata/System/ict/in"
 #basepath="/Users/kre/Desktop/sync/sortfolder"
 if [ $HOSTNAME = "Kai-Arnes-MacBook-Pro.local" ]; then
   echo "hi Kai on $HOSTNAME"
+  filepath="/Users/kre/Desktop/sync"
   basepath="/Users/kre/Desktop/sync/sortfolder"
 fi
 
@@ -33,7 +34,7 @@ esac
 
 
 # identify what type of file it is, since we need to unzip the .gz, and just copy the rest.
-filetype=`file --mime-type -b ./sync/"$file"`
+filetype=`file --mime-type -b "$filepath"/sync/"$file"`
 echo $filetype
 
 # get the second part of the filename, seperated by underscore to get the folder into which the file needs to go.
@@ -70,18 +71,18 @@ mkdir -p "$basepath/$folder"
 case "$filetype" in 
 "text/plain")
   echo "iconv-ing text file $file"
-  content=` iconv --from-code=ISO-8859-1 --to-code=UTF-8 "./sync/$file" `
+  content=` iconv --from-code=ISO-8859-1 --to-code=UTF-8 "$filepath/sync/$file" `
   save_and_post "$content"
   ;;
 "application/x-gzip")
   echo "unzipping and iconv-ing file $file"
-  content=`gunzip -c "./sync/$file" | iconv --from-code=ISO-8859-1 --to-code=UTF-8` 
+  content=`gunzip -c "$filepath/sync/$file" | iconv --from-code=ISO-8859-1 --to-code=UTF-8` 
   file=$originalfilename
   save_and_post "$content"
   ;;
 *)
   echo "iconv-ing unidentified file $file"
-  content=` iconv --from-code=ISO-8859-1 --to-code=UTF-8 "./sync/$file" `
+  content=` iconv --from-code=ISO-8859-1 --to-code=UTF-8 "$filepath/sync/$file" `
   save_and_post "$content"
   ;;
 
