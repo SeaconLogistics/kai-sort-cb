@@ -16,7 +16,7 @@ fi
 esburl="http://kai.requestcatcher.com/bla"
 
 save_and_post(){
-  echo $1 > "$basepath/$folder/$file" 
+  echo "$1" > "$basepath/$folder/$file" 
   curl --silent -d "$1" -H "Content-Type: text/plain" $esburl --output /dev/null
 }
 
